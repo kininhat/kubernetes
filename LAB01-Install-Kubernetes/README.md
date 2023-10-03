@@ -20,7 +20,7 @@
 
     5.2. [IP](#problem-ip)
 
-6. [Tổng kết một số cmd đáng chú ý] (#sumary-cmd)
+6. [Tổng kết một số cmd đáng chú ý](#sumary-cmd)
 
 ## 1. Nội dung lab <a name="contents"></a>
 
