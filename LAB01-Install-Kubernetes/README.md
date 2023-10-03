@@ -140,10 +140,10 @@ systemctl enable kubelet --now
 * Sau khi quá trình cài đặt sẽ  hiện thị output như hình ảnh
 
   * Hình ảnh khi không có option: **--upload-certs**
-  ![kubernetes-master-success.png](./images/kubernetes-master-success.png)
+  ![kubernetes-master-success.png](../images/kubernetes-master-success.png)
 
   * Hình ảnh khi có thêm option: **--upload-certs**
-  ![kubernetes-master-success-certs.png](./images/kubernetes-master-success-certs.png)
+  ![kubernetes-master-success-certs.png](../images/kubernetes-master-success-certs.png)
 
 * Khi nhận được hiển thị như hình ảnh trên cần thực hiện chạy 1 số  cmd như output mà kubernetes xuất ra
 
@@ -195,7 +195,7 @@ kubeadm join k-master.nhatkini.online:6443 --token dunacz.l79nzv2ec8u3di5v \
 kubectl config view --kubeconfig=/etc/kubernetes/kubelet.conf
 ```
 
-  ![check-worker1-join-cluster.png](./images/check-worker1-join-cluster.png)
+  ![check-worker1-join-cluster.png](../images/check-worker1-join-cluster.png)
 
 ## 5. Các vấn đề  phát sinh khi lab  <a name="problem"></a>
 
