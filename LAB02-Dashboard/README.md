@@ -1,25 +1,15 @@
 # LAB01-Install-Kubernetes
 
 1. [Nội dung lab](#contents)
-
 2. [Các cài đặt chung](#setup)
-
 3. [Master](#master)
-
 4. [Worker](#worker)
-
 5. [Các vấn đề  phát sinh khi lab] (#problem)
-
-  5.1. [CRI] (#problem-cri)
-
-      5.1.1. [crio.sock] (#pcri)
-
-      5.1.2. [containerd.sock] (#pcontainerd)
-
-      5.1.3. [Nên dùng khi nào?] (#when-use)
-
-  5.2. [IP] (#problem-ip)
-
+    5.1. [CRI] (#problem-cri)
+          5.1.1. [crio.sock] (#pcri)
+          5.1.2. [containerd.sock] (#pcontainerd)
+          5.1.3. [Nên dùng khi nào?] (#when-use)
+    5.2. [IP] (#problem-ip)
 6. [Tổng kết một số cmd đáng chú ý] (#sumary-cmd)
 
 ## 1. Nội dung lab <a name="contents"></a>
