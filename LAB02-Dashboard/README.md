@@ -1,16 +1,26 @@
 # LAB01-Install-Kubernetes
 
 1. [Nội dung lab](#contents)
+
 2. [Các cài đặt chung](#setup)
+
 3. [Master](#master)
+
 4. [Worker](#worker)
-5. [Các vấn đề  phát sinh khi lab] (#problem)
-    5.1. [CRI] (#problem-cri)
-          5.1.1. [crio.sock] (#pcri)
-          5.1.2. [containerd.sock] (#pcontainerd)
-          5.1.3. [Nên dùng khi nào?] (#when-use)
-    5.2. [IP] (#problem-ip)
-6. [Tổng kết một số cmd đáng chú ý] (#sumary-cmd)
+
+5. [Các vấn đề  phát sinh khi lab](#problem)
+
+    5.1. [CRI](#problem-cri)
+
+      5.1.1.[crio.sock](#pcri)
+
+      5.1.2.[containerd.sock](#pcontainerd)
+
+      5.1.3.[Nên dùng khi nào?](#when-use)
+
+    5.2. [IP](#problem-ip)
+
+6. [Tổng kết một số cmd đáng chú ý](#sumary-cmd)
 
 ## 1. Nội dung lab <a name="contents"></a>
 
@@ -130,10 +140,10 @@ systemctl enable kubelet --now
 * Sau khi quá trình cài đặt sẽ  hiện thị output như hình ảnh
 
   * Hình ảnh khi không có option: **--upload-certs**
-  ![kubernetes-master-success.png](./images/kubernetes-master-success.png)
+  ![kubernetes-master-success.png](../images/kubernetes-master-success.png)
 
   * Hình ảnh khi có thêm option: **--upload-certs**
-  ![kubernetes-master-success-certs.png](./images/kubernetes-master-success-certs.png)
+  ![kubernetes-master-success-certs.png](../images/kubernetes-master-success-certs.png)
 
 * Khi nhận được hiển thị như hình ảnh trên cần thực hiện chạy 1 số  cmd như output mà kubernetes xuất ra
 
@@ -185,7 +195,7 @@ kubeadm join k-master.nhatkini.online:6443 --token dunacz.l79nzv2ec8u3di5v \
 kubectl config view --kubeconfig=/etc/kubernetes/kubelet.conf
 ```
 
-  ![check-worker1-join-cluster.png](./images/check-worker1-join-cluster.png)
+  ![check-worker1-join-cluster.png](../images/check-worker1-join-cluster.png)
 
 ## 5. Các vấn đề  phát sinh khi lab  <a name="problem"></a>
 
