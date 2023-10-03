@@ -1,23 +1,19 @@
 # Tự Học Kubernetes
 
 I. [Lý thuyết](#ly-thuyet)
-
     1.1. [Master](#master)
+        1.1.1. [api-server](#api-server)
+        1.1.2. [etcd](#etcd)
+        1.1.3. [Kube Controller Manage](#kube-controller-manage)
+        1.1.4. [Cloud Controller Manager](#cloud-controller-manage)
+        1.1.5. [Scheduler](#scheduler)
 
-      1.1.1.[api-server](#api-server)
-      1.1.2.[etcd](#etcd)
-      1.1.3.[Kube Controller Manage](#kube-controller-manage)
-      1.1.4.[Cloud Controller Manager](#cloud-controller-manage)
-      1.1.5.[Scheduler](#scheduler)
-      
     1.2. [Worker](#worker)
-    
-        1.2.1.[kube-proxy](#kube-proxy)
-        1.2.2.[kubelet](#kubelet)
-        1.2.3.[Container Runtime](#container-runtime)
+        1.2.1. [kube-proxy](#kube-proxy)
+        1.2.2. [kubelet](#kubelet)
+        1.2.3. [Container Runtime](#container-runtime)
 
     2. [Những khái niệm cơ bản quan trọng trong Kubernetes](#khai-niem)
-
         2.1. [Pods](#pods)
         2.2. [Services](#services)
         2.3. [Labels](#labels)
@@ -33,7 +29,7 @@ I. [Lý thuyết](#ly-thuyet)
 II. [Lab Build On Virtual Machine/VPS](#lab-on-vps)
 
     1.1. [LAB01-Install-Kubernetes](#lab01)
-    
+
     1.2. [LAB02-Dashboard](#lab02)
 
     1.3. [LAB03-K9S](#lab03)
