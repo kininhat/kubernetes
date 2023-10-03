@@ -12,11 +12,11 @@
 
     5.1. [CRI](#problem-cri)
 
-          5.1.1.[crio.sock](#pcri)
+        5.1.1.[crio.sock](#pcri)
 
-          5.1.2.[containerd.sock](#pcontainerd)
-          
-          5.1.3.[Nên dùng khi nào?](#when-use)
+        5.1.2.[containerd.sock](#pcontainerd)
+        
+        5.1.3.[Nên dùng khi nào?](#when-use)
 
   5.2. [IP](#problem-ip)
 
