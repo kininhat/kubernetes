@@ -3,55 +3,72 @@
 I. [Lý thuyết](#ly-thuyet)
 
 1.1. [Master](#master)
-    1.1.1. [api-server](#api-server)
-    1.1.2. [etcd](#etcd)
-    1.1.3. [Kube Controller Manage](#kube-controller-manage)
-    1.1.4. [Cloud Controller Manager](#cloud-controller-manage)
-    1.1.5. [Scheduler](#scheduler)
+
+        1.1.1. [api-server](#api-server)
+
+        1.1.2. [etcd](#etcd)
+
+        1.1.3. [Kube Controller Manage](#kube-controller-manage)
+
+        1.1.4. [Cloud Controller Manager](#cloud-controller-manage)
+
+        1.1.5. [Scheduler](#scheduler)
 
 1.2. [Worker](#worker)
-    1.2.1. [kube-proxy](#kube-proxy)
-    1.2.2. [kubelet](#kubelet)
-    1.2.3. [Container Runtime](#container-runtime)
+
+        1.2.1. [kube-proxy](#kube-proxy)
+
+        1.2.2. [kubelet](#kubelet)
+
+        1.2.3. [Container Runtime](#container-runtime)
 
 2. [Những khái niệm cơ bản quan trọng trong Kubernetes](#khai-niem)
-    2.1. [Pods](#pods)
-    2.2. [Services](#services)
-    2.3. [Labels](#labels)
-    2.4. [Annotations](#annotations)
-    2.5. [ReplicaSets](#replicaSets)
-    2.6. [StatefulSets](#statefulSets)
-    2.7. [ConfigMaps](#configMaps)
-    2.8. [Secrets](secrets)
-    2.9. [Namespaces](#namespaces)
 
-3. [Môi trường cài đặt Kubernetes](#enviroment)
+        2.1. [Pods](#pods)
+
+        2.2. [Services](#services)
+
+        2.3. [Labels](#labels)
+
+        2.4. [Annotations](#annotations)
+
+        2.5. [ReplicaSets](#replicaSets)
+
+        2.6. [StatefulSets](#statefulSets)
+
+        2.7. [ConfigMaps](#configMaps)
+
+        2.8. [Secrets](secrets)
+
+        2.9. [Namespaces](#namespaces)
+
+3.[Môi trường cài đặt Kubernetes](#enviroment)
 
 II. [Lab Build On Virtual Machine/VPS](#lab-on-vps)
 
-1.1. [LAB01-Install-Kubernetes](#lab01)
+    1.1. [LAB01-Install-Kubernetes](#lab01)
 
-1.2. [LAB02-Dashboard](#lab02)
+    1.2. [LAB02-Dashboard](#lab02)
 
-1.3. [LAB03-K9S](#lab03)
+    1.3. [LAB03-K9S](#lab03)
 
-1.4. [LAB04-Pod,Node,kubectl](#lab04)
+    1.4. [LAB04-Pod,Node,kubectl](#lab04)
 
-1.5. [LAB05-ReplicaSet-HPA](#lab05)
+    1.5. [LAB05-ReplicaSet-HPA](#lab05)
 
-1.6. [LAB06-Deployment](#lab06)
+    1.6. [LAB06-Deployment](#lab06)
 
-1.7. [LAB07-Service-Secret](#lab07)
+    1.7. [LAB07-Service-Secret](#lab07)
 
-1.8. [LAB08-DaemonSet-Job-CronJob](#lab08)
+    1.8. [LAB08-DaemonSet-Job-CronJob](#lab08)
 
-1.9. [LAB09-PersistentVolume-NFS](#lab09)
+    1.9. [LAB09-PersistentVolume-NFS](#lab09)
 
-1.10. [LAB10-Ingress-HAProxy-Ingress](#lab10)
+    1.10. [LAB10-Ingress-HAProxy-Ingress](#lab10)
 
-1.11. [LAB11-Ingress-NGINX-Ingress](#lab11)
+    1.11. [LAB11-Ingress-NGINX-Ingress](#lab11)
 
-1.12. [LAB12-Rancher 2](#lab12)
+    1.12. [LAB12-Rancher 2](#lab12)
 
 ## I. Lý thuyết <a name="ly-thuyet"></a>
 
