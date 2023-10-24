@@ -303,8 +303,14 @@ kubectl get pods -A
 kubectl config view
 
 # Các ngữ cảnh hiện có trong config
-kubectl config view
+kubectl config get-contexts
 
 # Đổi ngữ cảnh làm việc (kết nối đến cluster nào)
 kubectl config use-context kubernetes-admin@kubernetes
+
+# Cấu hình kết nối đến Cluster cục bộ của bản Kubernetes có sẵn của Docker
+export KUBECONFIG=/etc/kubernetes/admin.conf
+
+# Nếu muốn yêu cầu kubectl sử dụng ngay file cấu hình nào đó, thì gán biến môi trường KUBECONFIG bằng đường dẫn file cấu hình, ví dụ sử dụng file cấu hình config-mycluster, ví dụ
+export KUBECONFIG=/Users/abcd/.kube/config-mycluster
 ```
