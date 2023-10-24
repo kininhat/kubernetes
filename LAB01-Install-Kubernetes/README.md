@@ -287,14 +287,11 @@ export KUBECONFIG=/etc/kubernetes/admin.conf
 # Lấy mã kết nối vào Cluster
 kubeadm token create --print-join-command
 
-#see this node join the cluster
+#see this node join the cluster - chỉ áp dụng ở master - không áp dụng ở worker
 kubectl get nodes
 
 # Thông tin cluster
 kubectl cluster-info
-
-# Các node (máy) trong cluster
-kubectl get nodes
 
 # Các pod (chứa container) đang chạy trong tất cả các namespace
 kubectl get pods -A
