@@ -16,7 +16,11 @@
 
       5.1.2.[containerd.sock](#pcontainerd)
 
-      5.1.3.[Nên dùng khi nào?](#when-use)
+      5.1.3.[dockershim.sock](#pdockershim)
+
+      5.1.4.[Nên dùng khi nào?](#when-use)
+
+      5.1.5.[Kiểm tra cri](#check-cri)
 
     5.2. [IP](#problem-ip)
 
@@ -121,6 +125,7 @@ apt update
 apt install -y kubelet kubeadm kubectl
 apt-mark hold kubelet kubeadm kubectl
 systemctl enable kubelet --now
+
 ```
 
 ## 3. Master <a name="master"></a>
@@ -129,10 +134,7 @@ systemctl enable kubelet --now
   * Khởi tạo này sẽ tạo ra cluster với cri là containerd
 
   ```bash
-  kubeadm init \
-    --cri-socket unix:///var/run/containerd/containerd.sock \
-    --upload-certs \
-    --control-plane-endpoint=k-master.nhatkini.online
+  kubeadm init --control-plane-endpoint=k-master.nhatkini.online --pod-network-cidr=192.168.0.0/16 --apiserver-advertise-address=222.255.214.25
   ```
 
   * Có thể chuyển sang các cri khác tùy theo nhu cầu
@@ -144,6 +146,7 @@ systemctl enable kubelet --now
 
   * Hình ảnh khi có thêm option: **--upload-certs**
   ![kubernetes-master-success-certs.png](../images/kubernetes-master-success-certs.png)
+    * Việc có thêm option: **--upload-certs** sẽ dẫn đến nhiều thao tác phức tạp, nên nếu không có kiến thức chuyên môn thì đừng nên thêm vào
 
 * Khi nhận được hiển thị như hình ảnh trên cần thực hiện chạy 1 số  cmd như output mà kubernetes xuất ra
 
@@ -185,8 +188,8 @@ kubeadm join k-master.nhatkini.online:6443 --token dunacz.l79nzv2ec8u3di5v \
 hoặc
 
 ```bash
-kubeadm join k-master.nhatkini.online:6443 --token dunacz.l79nzv2ec8u3di5v \
---discovery-token-ca-cert-hash sha256:66f21ab537f18f7227e2974164bff2e0beed2c95c1e351411b242d9271972b43 
+kubeadm join k-master.nhatkini.online:6443 --token msiwq5.zc0uckmyi6f0grhd \
+--discovery-token-ca-cert-hash sha256:3b1d6e4c3420e79948fea234549f98e37adeb4af22e4e5e8dc51f49f45f81e5a
 ```
 
 * Kiểm tra xem worker đang join vào cluster nào
@@ -201,18 +204,24 @@ kubectl config view --kubeconfig=/etc/kubernetes/kubelet.conf
 
 ### 5.1 CRI <a name="problem-cri"></a>
 
-* Gặp lỗi về CRI, cần phân biệt về  các flag `--cri-socket="/var/run/crio/crio.sock"` và `--cri-socket="/run/containerd/containerd.sock"`
-* Cả 2 chỉ định đường dẫn tới socket của Container Runtime Interface (CRI) mà kubelet sẽ sử dụng. Chúng chỉ khác nhau về loại runtime container mà bạn chọn:
+* Gặp lỗi về CRI, cần phân biệt về  các cri
+* Nếu có nhiều Container Runtime Interface (CRI) cần truyền cri được sử  dụng cho cho kubernetes. 1 số cri thông dụng
 
 ### 5.1.1 --cri-socket="/var/run/crio/crio.sock" <a name="pcri"></a>
 
-Khi bạn sử dụng flag này, bạn đang chỉ định rằng kubelet nên sử dụng CRI-O như là runtime container. CRI-O là một runtime container nguyên thuần được tối ưu hóa để hoạt động với Kubernetes. Nó cung cấp một cấu hình đơn giản và hiệu suất cao.
+Là một dự án lightweight mà đặc biệt dành riêng cho việc chạy container trong Kubernetes. CRI-O chỉ hỗ trợ những tính năng cần thiết cho Kubernetes và không bao gồm các tính năng không cần thiết. (Hiểu đơn giản bản base)
 
-### 5.2.2 --cri-socket="/run/containerd/containerd.sock" <a name="pcontainerd"></a>
+### 5.1.2 --cri-socket="/run/containerd/containerd.sock" <a name="pcontainerd"></a>
 
-Khi sử dụng flag này, bạn đang chỉ định rằng kubelet nên sử dụng containerd như là runtime container. Containerd cũng là một runtime container nguyên thuần, và nó là nền tảng mà Docker cũng sử dụng.
+* Là một dự án dưới b umbrella của CNCF, containerd là một runtime daemon mà có thể được sử dụng để chạy container. Docker cũng sử dụng containerd ở tần dưới.
+* Đa phần kubernetes sử  dụng cri này. (Hiểu đơn giản bản full)
 
-#### 5.2.3 Nên dùng khi nào? <a name="when-use"></a>
+### 5.1.3 --cri-socket="/run/containerd/dockershim.sock" <a name="pdockershim"></a>
+
+* CRI được hỗ  trợ khi cài đặt docker.io và docker khi không cài đặt containerd.io
+* CRI này không ưu tiên sử  dụng.
+
+#### 5.1.4 Nên dùng khi nào? <a name="when-use"></a>
 
 * **CRI-O**: Bạn có thể chọn CRI-O khi bạn muốn một giải pháp được tối ưu hóa đặc biệt cho Kubernetes, hoặc khi bạn cần các tính năng hoặc cấu hình đặc biệt chỉ có sẵn trong CRI-O.
 
@@ -220,8 +229,82 @@ Khi sử dụng flag này, bạn đang chỉ định rằng kubelet nên sử d�
 
 Cả hai runtime đều là lựa chọn tốt, và chúng được hỗ trợ rộng rãi trong cộng đồng Kubernetes. Sự lựa chọn giữa chúng thường phụ thuộc vào các yêu cầu và ưu tiên cụ thể của bạn.
 
+* **Docker (qua dockershim)**: Không ưu tiên sử dụng
+
+### 5.1.5 Kiểm tra cri <a name="check-cri"></a>
+
+```bash
+#Cài đặt
+wget https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.28.0/crictl-v1.28.0-linux-amd64.tar.gz
+
+#Giải nén
+tar -xf crictl-v1.28.0-linux-amd64.tar.gz -C /bin/
+
+#Cấp quyền thực thi
+chmod +x /bin/crictl
+```
+
+* Kiểm tra các cri đang hoạt động
+
+```bash
+crictl ps
+```
+
+![kubectl-01.png](../images/kubectl-01.png)
+
+* Kiểm tra các container đang hoạt động trên cri đang sử  dụng (bài lab đang dùng cri: containerd.sock)
+
+```bash
+crictl -r unix:///run/containerd/containerd.sock ps
+```
+
+![kubectl-02.png](../images/kubectl-02.png)
+
+Tham khảo từ 1 số link sao:
+
+* <https://github.com/kubernetes-sigs/cri-tools>
+* <https://github.com/kubernetes-sigs/cri-tools/releases>
+
+* <https://github.com/kubernetes-sigs/cri-tools/issues/1089>
+
+* <https://github.com/Mirantis/cri-dockerd>
+
 ### 5.2 IP <a name="problem-ip"></a>
 
 Có 1 số hướng dẫn lab về việc tạo tạo cluster và join cluster vào kubernetes với trường network **--apiserver-advertise-address=172.16.10.100** thì yêu cầu cần add thêm ip tương ứng vào card mạng để không bị lỗi
 
 ## 6. Tổng kết một số  cmd đáng chú ý <a name="contents"></a>
+
+```bash
+#Create cluster
+
+#Setup calico network
+kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+
+# Thiết lập file cấu hình kubectl sử dụng cho 1 phiên làm việc hiện tại của termianl
+export KUBECONFIG=/etc/kubernetes/admin.conf
+
+# Lấy mã kết nối vào Cluster
+kubeadm token create --print-join-command
+
+#see this node join the cluster
+kubectl get nodes
+
+# Thông tin cluster
+kubectl cluster-info
+
+# Các node (máy) trong cluster
+kubectl get nodes
+
+# Các pod (chứa container) đang chạy trong tất cả các namespace
+kubectl get pods -A
+
+# Xem nội dung cấu hình hiện tại của kubectl
+kubectl config view
+
+# Các ngữ cảnh hiện có trong config
+kubectl config view
+
+# Đổi ngữ cảnh làm việc (kết nối đến cluster nào)
+kubectl config use-context kubernetes-admin@kubernetes
+```
