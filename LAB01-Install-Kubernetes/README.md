@@ -271,7 +271,7 @@ Tham khảo từ 1 số link sao:
 
 ### 5.2 IP <a name="problem-ip"></a>
 
-Có 1 số hướng dẫn lab về việc tạo tạo cluster và join cluster vào kubernetes với trường network **--apiserver-advertise-address=172.16.10.100** thì yêu cầu cần add thêm ip tương ứng vào card mạng để không bị lỗi
+Có 1 số hướng dẫn lab về việc tạo tạo cluster và join cluster vào kubernetes với bằng cách quảng bá ip ra ngoài ví dụ: **--apiserver-advertise-address=192.168.1.19** thì yêu cầu card mạng phải có ip tương ứng để không bị lỗi.
 
 ## 6. Tổng kết một số  cmd đáng chú ý <a name="contents"></a>
 
