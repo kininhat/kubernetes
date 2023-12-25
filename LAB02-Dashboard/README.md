@@ -26,7 +26,8 @@ Hostname & Vai trò | Thông tin | IP
 ## 2. Cài đặt dashboard <a name="install-dashboard"></a>
 
 * Chỉ áp dụng trên master
-* Hiện tại bản stable kiến nghị trên <https://kubernetes.io> kiến nghị là <https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml> nên bài lab sẽ sử  dụng phiên bản này
+* Hiện tại bản stable kiến nghị trên <https://kubernetes.io> kiến nghị là bản dashboard-v.2.7.0.yaml, nên bài lab sẽ sử  dụng phiên bản này
+* Link chi tiết: <https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml>
 
 * Tạo thư mục chứa file dashboard và ssl key
 
@@ -163,7 +164,7 @@ spec:
 ---
 ```
 
-* Tạo user: **admin-user** để  login qua token và quản trị dashboard thông qua file: **admin-user.yaml**
+* Tạo user: **admin-user** để  login qua token và quản trị dashboard thông qua file: [admin-user.yaml](./dashboard/admin-user.yaml)
 
 ```yaml
 apiVersion: v1
@@ -235,4 +236,3 @@ kubectl -n kubernetes-dashboard create token admin-user
   ```bash
     kubectl get pods --all-namespaces
   ```
-  
