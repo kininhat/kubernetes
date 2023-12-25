@@ -1,28 +1,21 @@
-# LAB01-Install-Kubernetes
+# LAB02-Dashboard
 
 1. [Nội dung lab](#contents)
 
-2. [Các cài đặt chung](#setup)
+2. [Cài đặt dashboard](#install-dashboard)
 
-3. [Master](#master)
+    a. [Điều chỉnh config dashboard và tạo user](#dashboard-cf-u)
 
-4. [Worker](#worker)
-
-5. [Các vấn đề  phát sinh khi lab](#problem)
-
-    5.1. [CRI](#problem-cri)
-
-      5.1.1.[crio.sock](#pcri)
-
-      5.1.2.[containerd.sock](#pcontainerd)
-
-      5.1.3.[Nên dùng khi nào?](#when-use)
-
-    5.2. [IP](#problem-ip)
-
-6. [Tổng kết một số cmd đáng chú ý](#sumary-cmd)
+    b. [Run cmd deploy from config file](#dashboard-deploy)
 
 ## 1. Nội dung lab <a name="contents"></a>
+
+* Cài đặt web-ui-dashboard cho kubernetes
+* Tạo user & password & token để  đăng nhập vào link quản trị của dashboard
+* Public link dashboard để client kết nối và thực hiện quản trị
+* Cài đặt SSL cho link dashboard: <https://k-master.nhatkini.online:31000>
+
+* Nhắc lại mô hình đang lab hiện tại
 
 Hostname & Vai trò | Thông tin | IP
 :---------:|:----------:|:---------:
@@ -30,198 +23,216 @@ Hostname & Vai trò | Thông tin | IP
  k-worker1.nhatkini.online | HĐH Ubuntu 20.04, Docker CE, Kubernetes | 103.90.224.251
  k-worker2.nhatkini.online | HĐH Ubuntu 20.04, Docker CE, Kubernetes | 103.90.225.65
 
-## 2. Các cài đặt chung <a name="setup"></a>
+## 2. Cài đặt dashboard <a name="install-dashboard"></a>
 
-* Update
+* Chỉ áp dụng trên master
+* Hiện tại bản stable kiến nghị trên <https://kubernetes.io> kiến nghị là <https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml> nên bài lab sẽ sử  dụng phiên bản này
 
-```bash
-apt update && apt upgrade -y
-timedatectl set-timezone Asia/Ho_Chi_Minh
-apt-get install vim htop net-tools wget curl gnupg2 software-properties-common apt-transport-https ca-certificates -y
-```
-
-* Tắt swap
+* Tạo thư mục chứa file dashboard và ssl key
 
 ```bash
-sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
-swapoff -a
-mount -a
+mkdir -p /etc/kubernetes/dashboard/certs
 ```
 
-* Đặt hostname tương ứng với các node tương ứng
+### a. Điều chỉnh config dashboard và tạo user <a name="dashboard-cf-u"></a>
 
-  * master
+* Tải file dashboard
 
 ```bash
-hostnamectl set-hostname "k-master.nhatkini.online"
+wget -O /etc/kubernetes/dashboard/dashboard-v2.7.0.yaml https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
 ```
 
-  * k-worker1
+* Trong file được tải về  tìm và điểu chỉnh block **kind: Service** với **name: kubernetes-dashboard** đổi kiểu sang NodePort để truy cập https vào port được định nghĩa thay vì sử dụng mặc định
 
 ```bash
-hostnamectl set-hostname "k-worker1.nhatkini.online"
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    k8s-app: kubernetes-dashboard
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+spec:
+  # Đổi kiểu sang NodePort
+  type: NodePort
+  ports:
+    - port: 443
+      targetPort: 8443
+      # Chọn cổng truy cập qua Node là 3100
+      nodePort: 31000
+  selector:
+    k8s-app: kubernetes-dashboard
+
+---
 ```
 
-  * k-worker2
+* Xóa Secret có tên kubernetes-dashboard-certs
 
 ```bash
-hostnamectl set-hostname "k-worker2.nhatkini.online"
+#---
+
+#apiVersion: v1
+#kind: Secret
+#metadata:
+#  labels:
+#    k8s-app: kubernetes-dashboard
+#  name: kubernetes-dashboard-certs
+#  namespace: kubernetes-dashboard
+#type: Opaque
 ```
 
-* Thêm nội dung vào file /etc/hosts
+* Thêm SSL khi truy cập website dashboard trong block: **kind: Deployment** với **name: kubernetes-dashboard** phần **args** thay đổi comment **auto-generate-certificates** và bổ  sung  tls-cert-file and tls-key-file arguments.
+
+> **File ssl trong bộ lab được lấy từ certbot với định dạng: cert.pem and privkey.pem và cần đổi tên lại thành tls.crt and tls.key**
+> **Upload them to certs where our kubectl tool is installed. certs directory is: /etc/kubernetes/dashboard/certs**
 
 ```bash
-echo -e "
-222.255.214.25   k-master.nhatkini.online   k-master
-103.90.224.251   k-worker1.nhatkini.online  k-worker1
-103.90.225.65    k-worker2.nhatkini.online  k-worker2
-" >> /etc/hosts 
+---
 
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  labels:
+    k8s-app: kubernetes-dashboard
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      k8s-app: kubernetes-dashboard
+  template:
+    metadata:
+      labels:
+        k8s-app: kubernetes-dashboard
+    spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: kubernetes-dashboard
+          image: kubernetesui/dashboard:v2.7.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8443
+              protocol: TCP
+          args:
+            #- --auto-generate-certificates
+            - --namespace=kubernetes-dashboard
+            - --tls-cert-file=/tls.crt
+            - --tls-key-file=/tls.key
+            # Uncomment the following line to manually specify Kubernetes API server Host
+            # If not specified, Dashboard will attempt to auto discover the API server and connect
+            # to it. Uncomment only if the default does not work.
+            # - --apiserver-host=http://my-address:port
+          volumeMounts:
+            - name: kubernetes-dashboard-certs
+              mountPath: /certs
+              # Create on-disk volume to store exec logs
+            - mountPath: /tmp
+              name: tmp-volume
+          livenessProbe:
+            httpGet:
+              scheme: HTTPS
+              path: /
+              port: 8443
+            initialDelaySeconds: 30
+            timeoutSeconds: 30
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsUser: 1001
+            runAsGroup: 2001
+      volumes:
+        - name: kubernetes-dashboard-certs
+          secret:
+            secretName: kubernetes-dashboard-certs
+        - name: tmp-volume
+          emptyDir: {}
+      serviceAccountName: kubernetes-dashboard
+      nodeSelector:
+        "kubernetes.io/os": linux
+      # Comment the following tolerations if Dashboard must not be deployed on master
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+
+---
 ```
 
-* Cài đặt 1 số  file và update system:
+* Tạo user: **admin-user** để  login qua token và quản trị dashboard thông qua file: **admin-user.yaml**
+
+```yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kubernetes-dashboard
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: admin-user
+  namespace: kubernetes-dashboard
+```
+
+### b. Run cmd deploy from config file <a name="dashboard-deploy"></a>
+
+_**Truy cập vào đường dẫn: /etc/kubernetes/dashboard để  chạy các cmd**_
+
+* Deploy dashboard, ảnh như đính kèm: <https://i.imgur.com/45gJ28n.png>
 
 ```bash
-tee /etc/modules-load.d/containerd.conf <<EOF
-overlay
-br_netfilter
-EOF
-
-tee /etc/sysctl.d/kubernetes.conf <<EOF
-net.bridge.bridge-nf-call-ip6tables = 1
-net.bridge.bridge-nf-call-iptables = 1
-net.ipv4.ip_forward = 1
-EOF
-
-
-modprobe overlay
-modprobe br_netfilter
-sysctl --system
+kubectl apply -f dashboard-v2.7.0.yaml
 ```
 
-* Cài đặt containerd
+* Create and view/describe secret, ảnh như đính kèm: <https://i.imgur.com/QXtAVSJ.png>
 
 ```bash
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/docker.gpg
-add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-
-apt update && apt install -y containerd.io
-containerd config default | sudo tee /etc/containerd/config.toml >/dev/null 2>&1
-sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/g' /etc/containerd/config.toml
-systemctl enable containerd --now
-systemctl restart containerd 
+kubectl create secret generic kubernetes-dashboard-certs --from-file=certs -n kubernetes-dashboard
+kubectl describe secret -n kubernetes-dashboard kubernetes-dashboard-certs
 ```
 
-* Cài đặt kubernetes
+* Deploy admin-user, ảnh như đính kèm: <https://i.imgur.com/MP7kFeP.png>
 
 ```bash
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/kubernetes-xenial.gpg
-apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
-apt update
-apt install -y kubelet kubeadm kubectl
-apt-mark hold kubelet kubeadm kubectl
-systemctl enable kubelet --now
+kubectl apply -f admin-user.yaml
 ```
 
-## 3. Master <a name="master"></a>
+* Get admin-user token, ảnh như đính kèm: <https://i.imgur.com/9CfPh7E.png>
 
-* Khởi tạo
-  * Khởi tạo này sẽ tạo ra cluster với cri là containerd
+```bash
+kubectl -n kubernetes-dashboard create token admin-user
+```
 
+> Create user and get user token at link: <https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md>
+> Mỗi lẫn chạy cmd này thì token sẽ được tạo mới
+
+* Login thông qua link: <https://k-master.nhatkini.online:31000>, ảnh như đính kèm: <https://i.imgur.com/UR12XWl.png>
+
+* 1 số  cmd để  kiểm tra:
+  * Kiểm tra các pods đang hoạt của các pods trong namespace: kubernetes-dashboard
+  
   ```bash
-  kubeadm init \
-    --cri-socket unix:///var/run/containerd/containerd.sock \
-    --upload-certs \
-    --control-plane-endpoint=k-master.nhatkini.online
+    kubectl get pods -n kubernetes-dashboard
   ```
 
-  * Có thể chuyển sang các cri khác tùy theo nhu cầu
+  > Nếu các pods trong kubernetes-dashboard này nếu trong 1phút chưa tạo xong khả năng lỗi rất cao
 
-* Sau khi quá trình cài đặt sẽ  hiện thị output như hình ảnh
+  * Kiểm tra các pods đang hoạt của các pods trong tất cả namespace
 
-  * Hình ảnh khi không có option: **--upload-certs**
-  ![kubernetes-master-success.png](../images/kubernetes-master-success.png)
-
-  * Hình ảnh khi có thêm option: **--upload-certs**
-  ![kubernetes-master-success-certs.png](../images/kubernetes-master-success-certs.png)
-
-* Khi nhận được hiển thị như hình ảnh trên cần thực hiện chạy 1 số  cmd như output mà kubernetes xuất ra
-
-```bash
-mkdir -p $HOME/.kube
-cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-chown $(id -u):$(id -g) $HOME/.kube/config
-```
-
-* Cài đặt plugin mạng Calico
-
-```bash
-kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
-```
-
-* Kiểm tra lại Cluster
-
-```bash
-kubectl get nodes
-```
-
-* Bạn sẽ thấy danh sách các node và trạng thái của chúng.
-
-* Với đó, bạn đã cài đặt thành công một cluster Kubernetes với 1 node master và 2 node worker, sử dụng plugin mạng Calico.
-
-## 4. Worker (worker1 & worker2) <a name="worker"></a>
-
-* Thêm các Node vào Cluster
-
-Chạy lệnh này trên cả hai node worker (worker1 và worker2). Lệnh này sẽ được hiển thị ở cuối của quá trình kubeadm init ở node master:
-
-```bash
-kubeadm join k-master.nhatkini.online:6443 --token dunacz.l79nzv2ec8u3di5v \
---discovery-token-ca-cert-hash sha256:66f21ab537f18f7227e2974164bff2e0beed2c95c1e351411b242d9271972b43 \
---control-plane --certificate-key 597849a34d97b462cd4c47d6b1d8e0e70155dbed67f1e1bc1bf3eff3408c4fdf
-
-```
-
-hoặc
-
-```bash
-kubeadm join k-master.nhatkini.online:6443 --token dunacz.l79nzv2ec8u3di5v \
---discovery-token-ca-cert-hash sha256:66f21ab537f18f7227e2974164bff2e0beed2c95c1e351411b242d9271972b43 
-```
-
-* Kiểm tra xem worker đang join vào cluster nào
-
-```bash
-kubectl config view --kubeconfig=/etc/kubernetes/kubelet.conf
-```
-
-  ![check-worker1-join-cluster.png](../images/check-worker1-join-cluster.png)
-
-## 5. Các vấn đề  phát sinh khi lab  <a name="problem"></a>
-
-### 5.1 CRI <a name="problem-cri"></a>
-
-* Gặp lỗi về CRI, cần phân biệt về  các flag `--cri-socket="/var/run/crio/crio.sock"` và `--cri-socket="/run/containerd/containerd.sock"`
-* Cả 2 chỉ định đường dẫn tới socket của Container Runtime Interface (CRI) mà kubelet sẽ sử dụng. Chúng chỉ khác nhau về loại runtime container mà bạn chọn:
-
-### 5.1.1 --cri-socket="/var/run/crio/crio.sock" <a name="pcri"></a>
-
-Khi bạn sử dụng flag này, bạn đang chỉ định rằng kubelet nên sử dụng CRI-O như là runtime container. CRI-O là một runtime container nguyên thuần được tối ưu hóa để hoạt động với Kubernetes. Nó cung cấp một cấu hình đơn giản và hiệu suất cao.
-
-### 5.2.2 --cri-socket="/run/containerd/containerd.sock" <a name="pcontainerd"></a>
-
-Khi sử dụng flag này, bạn đang chỉ định rằng kubelet nên sử dụng containerd như là runtime container. Containerd cũng là một runtime container nguyên thuần, và nó là nền tảng mà Docker cũng sử dụng.
-
-#### 5.2.3 Nên dùng khi nào? <a name="when-use"></a>
-
-* **CRI-O**: Bạn có thể chọn CRI-O khi bạn muốn một giải pháp được tối ưu hóa đặc biệt cho Kubernetes, hoặc khi bạn cần các tính năng hoặc cấu hình đặc biệt chỉ có sẵn trong CRI-O.
-
-* **Containerd**: Nếu bạn muốn một giải pháp runtime container thông dụng và linh hoạt, hoặc nếu bạn đã quen với Docker và muốn chuyển đến một giải pháp nguyên thuần mà vẫn giữ được một số tính năng tương tự, containerd có thể là lựa chọn tốt.
-
-Cả hai runtime đều là lựa chọn tốt, và chúng được hỗ trợ rộng rãi trong cộng đồng Kubernetes. Sự lựa chọn giữa chúng thường phụ thuộc vào các yêu cầu và ưu tiên cụ thể của bạn.
-
-### 5.2 IP <a name="problem-ip"></a>
-
-Có 1 số hướng dẫn lab về việc tạo tạo cluster và join cluster vào kubernetes với trường network **--apiserver-advertise-address=172.16.10.100** thì yêu cầu cần add thêm ip tương ứng vào card mạng để không bị lỗi
-
-## 6. Tổng kết một số  cmd đáng chú ý <a name="contents"></a>
+  ```bash
+    kubectl get pods --all-namespaces
+  ```
+  
