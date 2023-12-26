@@ -193,7 +193,11 @@ Tham khảo phần lý thuyết tại: <https://viblo.asia/p/ly-thuyet-tim-hieu-
 
 ### 1.2 LAB02-Dashboard <a name="lab02"></a>
 
+[README.md](./LAB02-Dashboard/README.md)
+
 ### 1.3 LAB03-K9S <a name="lab03"></a>
+
+[README.md](./LAB03-K9S/README.md)
 
 ### 1.4 LAB04-Pod,Node,kubectl <a name="lab04"></a>
 
