@@ -192,30 +192,38 @@ subjects:
 
 _**Truy cập vào đường dẫn: /etc/kubernetes/dashboard để  chạy các cmd**_
 
-* Deploy dashboard, ảnh như đính kèm: <https://i.imgur.com/45gJ28n.png>
+* Deploy dashboard
 
 ```bash
 kubectl apply -f dashboard-v2.7.0.yaml
 ```
 
-* Create and view/describe secret, ảnh như đính kèm: <https://i.imgur.com/QXtAVSJ.png>
+![deploy-d](https://i.imgur.com/45gJ28n.png)
+
+* Create and view/describe secret
 
 ```bash
 kubectl create secret generic kubernetes-dashboard-certs --from-file=certs -n kubernetes-dashboard
 kubectl describe secret -n kubernetes-dashboard kubernetes-dashboard-certs
 ```
 
-* Deploy admin-user, ảnh như đính kèm: <https://i.imgur.com/MP7kFeP.png>
+![create-view-describe-secret](https://i.imgur.com/QXtAVSJ.png)
+
+* Deploy admin-user
 
 ```bash
 kubectl apply -f admin-user.yaml
 ```
 
-* Get admin-user token, ảnh như đính kèm: <https://i.imgur.com/9CfPh7E.png>
+![deloy-admin](https://i.imgur.com/MP7kFeP.png)
+
+* Get admin-user token
 
 ```bash
 kubectl -n kubernetes-dashboard create token admin-user
 ```
+
+![gen-admin-token](https://i.imgur.com/9CfPh7E.png)
 
 > Create user and get user token at link: <https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md>
 > Mỗi lẫn chạy cmd này thì token sẽ được tạo mới
