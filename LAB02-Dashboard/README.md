@@ -228,7 +228,9 @@ kubectl -n kubernetes-dashboard create token admin-user
 > Create user and get user token at link: <https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md>
 > Mỗi lẫn chạy cmd này thì token sẽ được tạo mới
 
-* Login thông qua link: <https://k-master.nhatkini.online:31000>, ảnh như đính kèm: <https://i.imgur.com/UR12XWl.png>
+* Login thông qua link: <https://k-master.nhatkini.online:31000>
+
+![login](i.imgur.com/UR12XWl.png)
 
 * 1 số  cmd để  kiểm tra:
   * Kiểm tra các pods đang hoạt của các pods trong namespace: kubernetes-dashboard
