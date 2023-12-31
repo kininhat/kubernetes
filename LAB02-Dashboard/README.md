@@ -230,7 +230,7 @@ kubectl -n kubernetes-dashboard create token admin-user
 
 * Login thông qua link: <https://k-master.nhatkini.online:31000>
 
-![login](i.imgur.com/UR12XWl.png)
+![login](https://i.imgur.com/UR12XWl.png)
 
 * 1 số  cmd để  kiểm tra:
   * Kiểm tra các pods đang hoạt của các pods trong namespace: kubernetes-dashboard
