@@ -201,6 +201,8 @@ Tham khảo phần lý thuyết tại: <https://viblo.asia/p/ly-thuyet-tim-hieu-
 
 ### 1.4 LAB04-Pod,Node,kubectl <a name="lab04"></a>
 
+[README.md](./LAB04-Pod,Node,kubectl/README.md)
+
 ### 1.5 LAB05-ReplicaSet-HPA <a name="lab05"></a>
 
 ### 1.6 LAB06-Deployment <a name="lab06"></a>
