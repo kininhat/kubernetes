@@ -17,8 +17,9 @@
     3.1. [Truy cập pop thông qua proxy](#pob-proxy)
 
     3.2. [Tạo pod 1 container](#pob-1-container)
-          3.2.1. [Tạo pod qua cmd với file yaml](#pob-1-container-yaml)
 
+          3.2.1. [Tạo pod qua cmd với file yaml](#pob-1-container-yaml)
+          
           3.2.2. [Tạo pod qua giao diện](#pob-1-container-gui)
 
   3.3. [Tạo và thao tác với pod nhiều container](#pob-more-container)
