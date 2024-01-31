@@ -18,14 +18,14 @@
 
     3.2. [Tạo pod 1 container](#pob-1-container)
 
-        3.2.1. [Tạo pod qua cmd với file yaml](#pob-1-container-yaml)
+          3.2.1. [Tạo pod qua cmd với file yaml](#pob-1-container-yaml)
 
-        3.2.2. [Tạo pod qua giao diện](#pob-1-container-gui)
+          3.2.2. [Tạo pod qua giao diện](#pob-1-container-gui)
 
   3.3. [Tạo và thao tác với pod nhiều container](#pob-more-container)
 
-      3.3.1 [Tạo](#pob-more-container-create)
-      3.3.2 [1 số thao tác với pod nhiều container](#pob-more-container-cmd)
+        3.3.1 [Tạo](#pob-more-container-create)
+        3.3.2 [1 số thao tác với pod nhiều container](#pob-more-container-cmd)
 
 ## 1. Nội dung lab <a name="contents"></a>
 
