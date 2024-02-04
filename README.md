@@ -205,16 +205,32 @@ Tham khảo phần lý thuyết tại: <https://viblo.asia/p/ly-thuyet-tim-hieu-
 
 ### 1.5 LAB05-ReplicaSet-HPA <a name="lab05"></a>
 
+[README.md](./LAB05-ReplicaSet-HPA/README.md)
+
 ### 1.6 LAB06-Deployment <a name="lab06"></a>
+
+[README.md](./LAB06-Deployment/README.md)
 
 ### 1.7 LAB07-Service-Secret <a name="lab07"></a>
 
+[README.md](./LAB07-Service-Secret/README.md)
+
 ### 1.8 LAB08-DaemonSet-Job-CronJob <a name="lab08"></a>
+
+[README.md](./LAB08-DaemonSet-Job-CronJob/README.md)
 
 ### 1.9 LAB09-PersistentVolume-NFS <a name="lab09"></a>
 
+[README.md](./LAB09-PersistentVolume-NFS/README.md)
+
 ### 1.10 LAB10-Ingress-HAProxy-Ingress <a name="lab10"></a>
+
+[README.md](./LAB10-Ingress-HAProxy-Ingress/README.md)
 
 ### 1.11 LAB11-Ingress-NGINX-Ingress <a name="lab11"></a>
 
+[README.md](./LAB11-Ingress-NGINX-Ingress/README.md)
+
 ### 1.12 LAB12-Rancher 2 <a name="lab12"></a>
+
+[README.md](./LAB12-Rancher-2/README.md)
