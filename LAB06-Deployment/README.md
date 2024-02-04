@@ -129,7 +129,7 @@ kubectl get pods -o wide
 
 * Về  giao diện ở dashboard mình không đề  cặp tới vì chỉ thể hiện được thông tin và không thao tác được gì khác
 
-![deployapp-gui]https://i.imgur.com/liqgtmD.png
+![deployapp-gui](https://i.imgur.com/liqgtmD.png)
 
 ### 3.1. Cập nhật Deployment <a name="deployment-update"></a>
 
